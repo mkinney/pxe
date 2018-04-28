@@ -1,0 +1,63 @@
+---
+
+- name: Create a pxe server
+  hosts: all
+  become: true
+
+  tasks:
+
+    - name: Install packages
+      package:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - dnsmasq
+        - syslinux 
+        - tftp-server
+
+    - name: Create dnsmasq template
+      template:
+        src: dnsmasq.conf.j2
+        dest: /etc/dnsmasq.conf
+
+    - name: Copy syslinux files
+      shell: cp -r /usr/share/syslinux/* /var/lib/tftpboot
+
+    - name: Create pxe server config file
+      file:
+        path: /var/lib/tftpboot/pxelinux.cfg
+        state: directory
+
+    - name: Create pxe server images dir
+      file:
+        path: /var/lib/tftpboot/images
+        state: directory
+
+    - name: Create pxe default template that does esxi67
+      template:
+        src: default.j2
+        dest: /var/lib/tftpboot/pxelinux.cfg/default
+      tags: template  
+
+    - name: Start and enable the services
+      systemd:
+        name: "{{ item }}"
+        state: restarted
+        enabled: true
+        daemon_reload: yes
+      with_items:
+        - dnsmasq
+      tags:
+        start
+
+    # TODO: could improve upon this...
+    - name: Disable firewall
+      systemd:
+        name: "{{ item }}"
+        state: stopped
+        enabled: false
+        daemon_reload: yes
+      with_items:
+        - firewalld
+      tags:
+        firewall

@@ -1,0 +1,12 @@
+DEFAULT menu.c32
+MENU TITLE ESXi Boot Menu
+NOHALT 1
+PROMPT 0
+TIMEOUT 80
+LABEL install
+KERNEL images/esxi67/mboot.c32
+APPEND -c images/esxi67/boot.cfg
+MENU LABEL esxi67 ^Installer
+LABEL hddboot
+LOCALBOOT 0x80
+MENU LABEL ^Boot from local disk

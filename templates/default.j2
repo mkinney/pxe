@@ -1,12 +1,20 @@
 DEFAULT menu.c32
-MENU TITLE ESXi Boot Menu
 NOHALT 1
 PROMPT 0
 TIMEOUT 80
-LABEL install
+
+MENU TITLE Boot Menu
+
+LABEL centos7 install
+KERNEL images/centos7/vmlinuz
+APPEND initrd=/images/centos7/initrd.img inst.repo=ftp://192.168.0.107/pub/centos7
+MENU LABEL centos7 ^Installer
+
+LABEL esxi67 install
 KERNEL images/esxi67/mboot.c32
 APPEND -c images/esxi67/boot.cfg
 MENU LABEL esxi67 ^Installer
+
 LABEL hddboot
 LOCALBOOT 0x80
 MENU LABEL ^Boot from local disk

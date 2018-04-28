@@ -3,8 +3,14 @@
 - name: Create a pxe server
   hosts: all
   become: true
+  gather_facts: false
 
   tasks:
+
+
+    - name: Disable SELinux
+      selinux:
+        state: disabled
 
     - name: Install packages
       package:
@@ -14,6 +20,7 @@
         - dnsmasq
         - syslinux 
         - tftp-server
+        - vsftpd
 
     - name: Create dnsmasq template
       template:
@@ -33,10 +40,28 @@
         path: /var/lib/tftpboot/images
         state: directory
 
-    - name: Create pxe default template that does esxi67
+    - name: Create pxe default template
       template:
         src: default.j2
         dest: /var/lib/tftpboot/pxelinux.cfg/default
+      tags: template  
+
+    - name: Create centos7 kickstart
+      template:
+        src: centos7.ks.j2
+        dest: /var/ftp/pub/centos7/centos7.ks
+      tags: template  
+
+    - name: Restart tftp
+      systemd:
+        name: tftp
+        state: restarted
+      tags: template  
+
+    - name: Restart vsftpd
+      systemd:
+        name: vsftpd
+        state: restarted
       tags: template  
 
     - name: Start and enable the services
@@ -47,6 +72,7 @@
         daemon_reload: yes
       with_items:
         - dnsmasq
+        - vsftpd
       tags:
         start
 

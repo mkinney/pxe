@@ -13,7 +13,7 @@ Spin up a new minimal centos7 vm (with bridged networking).
 
 # TODO: move stuff below into ansible
 
-# scp esxi iso to /tmp
+# scp esxi67 iso to /tmp
 mkdir -p /mnt/iso
 cd /tmp
 mount -o loop VMware-VMvisor-Installer-6.7.0-8169922.x86_64.iso /mnt/iso
@@ -22,6 +22,16 @@ cp -rf /mnt/iso/* /var/lib/tftpboot/images/esxi67
 umount /mnt/iso
 # If you do not do next step then it cannot find /b0 files
 sed -i 's/\///g' /var/lib/tftpboot/images/esxi67/boot.cfg
+
+# scp esxi65 iso to /tmp
+mkdir -p /mnt/iso
+cd /tmp
+mount -o loop VMware-VMvisor-Installer-6.5.0-4564106.x86_64.iso /mnt/iso
+mkdir -p /var/lib/tftpboot/images/esxi65
+cp -rf /mnt/iso/* /var/lib/tftpboot/images/esxi65
+umount /mnt/iso
+# If you do not do next step then it cannot find /b0 files
+sed -i 's/\///g' /var/lib/tftpboot/images/esxi65/boot.cfg
 
 # scp centos iso to /tmp
 cd /tmp
@@ -37,4 +47,4 @@ umount /mnt/iso
 
 Testing
   Be sure to have at least 2gb ram for centos7 (otherwise weird out of disk space error)
-Can add "ks=ftp://192.168.0.107/pub/centos7/centos7.ks" for kickstar
+Can add "ks=ftp://192.168.0.107/pub/centos7/centos7.ks" for kickstart

@@ -6,7 +6,7 @@ Setup ansible:
   pip install ansible
   pip freeze > requirements.txt
 
-Spin up a new minimal centos7 vm (with bridged networking).
+Spin up a new minimal centos7 vm (with bridged networking)
   hostname:pixie
   ip: 192.168.0.107
 # Note: Ensure mikekinney has sudo no password
@@ -44,7 +44,21 @@ cp -av /mnt/iso/* /var/ftp/pub/centos7
 chmod -R 755 /var/ftp/pub/centos7
 umount /mnt/iso
 
+# scp ubuntu iso to /tmp
+scp ubuntu-18.04.2-server-amd64.iso root@pixie:/tmp
+# login to pixie (as root)
+cd /tmp
+mount -o loop ubuntu-18.04.2-server-amd64.iso /mnt/iso
+mkdir -p /var/lib/tftpboot/images/ubuntu18
+cp -r /mnt/iso/install/netboot/* /var/lib/tftpboot/images/ubuntu18/
+mkdir -p /var/ftp/pub/ubuntu18
+cp -av /mnt/iso/* /var/ftp/pub/ubuntu18
+chmod -R 755 /var/ftp/pub/ubuntu18
+echo "d-i live-installer/net-image string ftp://192.168.0.107/pub/ubuntu/install/filesystem.squashfs" > /var/ftp/pub/ubuntu18/preseed/local-sources.seed
+umount /mnt/iso
 
-Testing
-  Be sure to have at least 2gb ram for centos7 (otherwise weird out of disk space error)
-Can add "ks=ftp://192.168.0.107/pub/centos7/centos7.ks" for kickstart
+
+Testing:
+- Be sure to have at least 2gb ram for centos7 (otherwise weird out of disk space error)
+- Can add "ks=ftp://192.168.0.107/pub/centos7/centos7.ks" for kickstart
+- For testing, create a new linux vm (with bridged autodetect network option)

@@ -10,6 +10,11 @@ KERNEL images/centos7/vmlinuz
 APPEND initrd=/images/centos7/initrd.img inst.repo=ftp://192.168.0.107/pub/centos7
 MENU LABEL ^centos7 installer
 
+LABEL ubuntu18 install
+KERNEL images/ubuntu18/ubuntu-installer/amd64/linux
+APPEND initrd=images/ubuntu18/ubuntu-installer/amd64/initrd.gz url=ftp://192.168.0.107/pub/ubuntu18/preseed/local-sources.seed ip=dhcp
+MENU LABEL ^ubuntu18 installer
+
 LABEL esxi65 install
 KERNEL images/esxi65/mboot.c32
 APPEND -c images/esxi65/boot.cfg
